@@ -1,0 +1,31 @@
+---
+description: "Conducts multi-axis code review. Use before merging any change."
+alwaysApply: false
+---
+
+# Code Review & Quality — Five-Axis Review
+
+## Correctness
+- Does it match spec? Edge cases handled? Error paths covered? Tests adequate?
+
+## Readability & Simplicity
+- Descriptive names? Straightforward control flow? Could be fewer lines? No dead code?
+
+## Architecture
+- Follows existing patterns? Clean module boundaries? Proper dependency direction?
+
+## Security
+- Input validated? Secrets out of code? SQL parameterized? External data untrusted?
+
+## Performance
+- No N+1 queries? No unbounded loops? Async where needed? Pagination present?
+
+## Additional Rules
+
+- **Change sizing:** ~100 lines good, ~300 acceptable, ~1000 too large (split it)
+- **Categorize findings:** Critical (blocks merge), Required (no prefix), Nit (optional), FYI (informational)
+- Use `logger` not `print()` in source code
+- Avoid bare `except:` — use `except Exception:` at minimum
+- After changes, check for orphaned/dead code
+- Before adding dependencies: check existing stack, size, maintenance, license, vulnerabilities
+- Don't rubber-stamp. Quantify problems. Push back on real issues.

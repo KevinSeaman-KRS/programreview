@@ -1,0 +1,47 @@
+/**
+ * UAGC brand tokens — sourced from uagc_resources.pdf (Brand Guidelines + Editorial).
+ * Import or copy :root into HTML reports. Web font: Montserrat (Google Fonts).
+ */
+:root {
+  /* Primary */
+  --arizona-red: #AB0520;
+  --arizona-blue: #0C234B;
+
+  /* Aliases used in report HTML */
+  --uagc-red: var(--arizona-red);
+  --uagc-dark: var(--arizona-blue);
+
+  /* Highlight (do not pair orange or yellow with arizona-red) */
+  --highlight-orange: #EF9600;
+  --highlight-blue: #0076A8;
+  --highlight-sky: #81D3EB;
+  --highlight-purple: #621244;
+
+  /* Neutral */
+  --neutral-light-gray: #D0D0CE;
+  --neutral-dark-gray: #53565A;
+  --neutral-tan: #D6D2C4;
+
+  /* Secondary */
+  --secondary-river: #007D8A;
+  --secondary-silver: #98A4AE;
+  --secondary-yellow: #F9E17D;
+
+  /* Editorial hyperlink in body copy */
+  --link-editorial: #0000ff;
+
+  /* Report UI semantics */
+  --bg: #f4f4f3;
+  --card: #ffffff;
+  --border: var(--neutral-light-gray);
+  --text: var(--neutral-dark-gray);
+  --muted: var(--secondary-silver);
+  --link: var(--highlight-blue);
+
+  /* Data viz (keep distinct from brand primaries for +/-) */
+  --positive: var(--secondary-river);
+  --negative: var(--arizona-red);
+  --caution: var(--highlight-orange);
+
+  --font-sans: "Montserrat", Calibri, "Segoe UI", system-ui, sans-serif;
+}

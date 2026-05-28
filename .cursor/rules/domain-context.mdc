@@ -1,0 +1,28 @@
+---
+description: "Template for domain-context loader rules. Copy and customize per domain."
+alwaysApply: false
+---
+
+# Domain-Context Loader Template
+
+Create one rule per major domain. Copy this template and customize:
+
+```yaml
+---
+description: "Load <domain> context when editing related files."
+globs:
+  - <relevant/path/**>
+alwaysApply: false
+---
+```
+
+## Rule body
+
+```markdown
+# <Domain> Context
+
+Before changing files under <path>/, read [docs/agent-context/<domain>.md].
+Do not duplicate that file inline — follow its conventions in your edits.
+```
+
+This pattern keeps rules lightweight (auto-loaded by glob) while domain details live in full docs that agents load on demand.

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile preview — BA in Psychology</title>
+<style>
+:root {
+    --arizona-red: #AB0520;
+    --arizona-blue: #0C234B;
+    --uagc-red: var(--arizona-red);
+    --uagc-dark: var(--arizona-blue);
+    --bg: #f4f4f3;
+    --card: #ffffff;
+    --border: #D0D0CE;
+    --text: #53565A;
+    --muted: #98A4AE;
+    --link: #0076A8;
+    --green: #007D8A;
+    --red: var(--arizona-red);
+    --amber: #EF9600;
+    --font-sans: "Montserrat", Calibri, "Segoe UI", system-ui, sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font-sans); background: var(--bg); color: var(--text); line-height: 1.6; }
+.container { max-width: 1500px; margin: 0 auto; padding: 2rem; }
+h1 { color: var(--uagc-dark); font-size: 2rem; margin-bottom: 0.25rem; }
+.subtitle { color: var(--muted); margin-bottom: 0.75rem; font-size: 0.95rem; }
+.sample-note { font-size: 0.82rem; color: #475569; margin-bottom: 2rem; line-height: 1.5; max-width: 960px; }
+.sample-note a { color: var(--link); text-decoration: none; font-weight: 500; }
+.sample-note a:hover { text-decoration: underline; }
+.link-muted { color: var(--muted); font-size: 0.72rem; }
+.card { background: var(--card); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); padding: 1.5rem; margin-bottom: 2rem; }
+.card h2 { color: var(--uagc-dark); margin-bottom: 1rem; font-size: 1.3rem; }
+
+/* Tabs */
+.tabs { display: flex; gap: 0; margin-bottom: 0; }
+.tab { padding: 0.75rem 1.5rem; cursor: pointer; border: 1px solid var(--border); border-bottom: none; border-radius: 8px 8px 0 0; background: #f1f5f9; color: var(--muted); font-weight: 500; }
+.tab.active { background: var(--card); color: var(--uagc-dark); border-bottom: 1px solid var(--card); margin-bottom: -1px; z-index: 1; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.tab-panel { border: 1px solid var(--border); border-radius: 0 8px 8px 8px; background: var(--card); padding: 1rem; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+th { background: var(--uagc-dark); color: white; padding: 0.6rem 0.7rem; text-align: left; position: sticky; top: 0; z-index: 2; white-space: nowrap; }
+th:nth-child(n+4) { text-align: right; }
+th:nth-child(1), th:nth-child(2), th:nth-child(3) { text-align: left; }
+td { padding: 0.45rem 0.7rem; border-bottom: 1px solid var(--border); }
+td:nth-child(n+4) { text-align: right; font-variant-numeric: tabular-nums; }
+td:nth-child(1), td:nth-child(2), td:nth-child(3) { text-align: left; }
+tr:hover { background: #f0f4ff; }
+.link-cell { white-space: nowrap; }
+.link-cell a { color: var(--link); text-decoration: none; font-size: 0.75rem; margin-right: 0.5rem; }
+.link-cell a:hover { text-decoration: underline; }
+
+/* KPIs */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+.kpi { background: linear-gradient(135deg, var(--uagc-dark), #0076A8); color: white; border-radius: 10px; padding: 1.2rem; text-align: center; }
+.kpi .value { font-size: 1.8rem; font-weight: 700; }
+.kpi .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8; margin-top: 0.2rem; }
+.kpi .change { display: inline-block; margin-top: 0.4rem; font-size: 0.8rem; padding: 0.15rem 0.5rem; border-radius: 12px; font-weight: 600; }
+.change.up { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+.change.down { background: rgba(239,68,68,0.2); color: #fca5a5; }
+.change.flat { background: rgba(245,158,11,0.2); color: #fcd34d; }
+.change.neutral { background: rgba(255,255,255,0.15); color: #94a3b8; }
+
+/* Matrix vs prior — readable on white */
+.chg-prior { display: inline-block; padding: 0.12rem 0.45rem; border-radius: 8px; font-size: 0.68rem; font-weight: 600; color: #0f172a; }
+.chg-prior.chg-up { background: rgba(16,185,129,0.12); }
+.chg-prior.chg-down { background: rgba(239,68,68,0.12); }
+.chg-prior.chg-flat { background: rgba(245,158,11,0.12); }
+.chg-prior.chg-new { background: rgba(148,163,184,0.15); }
+
+.matrix-wrap { overflow: visible; }
+.matrix-wrap table { font-size: 0.68rem; }
+.matrix-wrap th { padding: 0.35rem 0.4rem; }
+.matrix-wrap td { padding: 0.22rem 0.4rem; }
+
+/* Charts */
+.chart-container { margin: 1.5rem 0; }
+.bar-chart { display: flex; align-items: flex-end; gap: 3px; height: 150px; padding: 0 0 2rem 0; border-bottom: 1px solid var(--border); position: relative; }
+.bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; height: 100%; justify-content: flex-end; }
+.bar { width: 70%; border-radius: 3px 3px 0 0; background: var(--uagc-red); min-height: 2px; transition: all 0.2s; }
+.bar:hover { opacity: 0.8; }
+.bar-label { position: absolute; bottom: -1.8rem; font-size: 0.65rem; color: var(--muted); white-space: nowrap; }
+.bar-value { position: absolute; top: -1.2rem; font-size: 0.6rem; color: var(--text); font-weight: 600; }
+
+/* Funnel */
+.funnel { display: flex; align-items: center; gap: 0; margin: 1rem 0; flex-wrap: wrap; }
+.funnel-stage { text-align: center; padding: 0.8rem 1.2rem; position: relative; flex: 1; min-width: 120px; }
+.funnel-stage .stage-value { font-size: 1.4rem; font-weight: 700; color: var(--uagc-dark); }
+.funnel-stage .stage-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; }
+.funnel-stage .stage-pct { font-size: 0.75rem; color: var(--uagc-red); font-weight: 600; margin-top: 0.2rem; }
+.funnel-arrow { color: var(--border); font-size: 1.5rem; }
+
+/* Detail */
+.detail-section { page-break-before: always; margin-top: 3rem; padding-top: 2rem; border-top: 3px solid var(--uagc-red); }
+.detail-header { margin-bottom: 1.5rem; }
+.detail-header h3 { font-size: 1.5rem; color: var(--uagc-dark); margin-bottom: 0.3rem; }
+.detail-header .meta { color: var(--muted); font-size: 0.9rem; }
+.detail-header .meta a { color: var(--uagc-red); text-decoration: none; }
+
+/* Screenshots */
+.screenshots { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.25rem; margin: 1.5rem 0; max-width: 100%; }
+.screenshot-column { display: flex; flex-direction: column; gap: 0.75rem; }
+.screenshot-column-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--uagc-dark); }
+.screenshot-box { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: #fff; }
+.screenshot-box img { width: 100%; display: block; max-height: 520px; object-fit: contain; object-position: top center; }
+.screenshot-empty { background: #f8fafc; border: 1px dashed var(--border); border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; font-size: 0.8rem; color: #475569; }
+.screenshot-empty pre { margin-top: 0.5rem; font-size: 0.72rem; background: #fff; padding: 0.5rem; border-radius: 4px; overflow-x: auto; }
+.sankey-card { margin: 1rem 0; }
+.sankey-host { width: 100%; min-height: 400px; }
+.prose-card { margin: 1rem 0 1.5rem; background: #fafbfc; border-left: 4px solid var(--uagc-red); }
+.prose-card h4 { color: var(--uagc-dark); margin-bottom: 0.6rem; }
+.prose-card p { font-size: 0.85rem; line-height: 1.55; color: #334155; margin-bottom: 0.55rem; }
+.prose-card p:last-child { margin-bottom: 0; }
+.matrix-row-undecided { background: #f8f9fa; font-weight: 600; }
+.matrix-row-undecided td { border-top: 2px solid var(--uagc-dark); }
+.region-card { margin: 1rem 0 1.5rem; }
+.region-bars { display: flex; flex-direction: column; gap: 0.45rem; }
+.region-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; }
+.region-label { width: 100px; font-weight: 500; color: var(--uagc-dark); }
+.region-bar-bg { flex: 1; height: 14px; background: #e2e8f0; border-radius: 7px; overflow: hidden; }
+.region-bar-fill { height: 100%; background: #0ea5e9; border-radius: 7px; }
+.region-pct { min-width: 88px; text-align: right; color: #475569; }
+.undecided-block { border-top: 4px solid var(--muted); margin-top: 2rem; padding-top: 1rem; }
+.undecided-block > h2 { color: var(--uagc-dark); margin-bottom: 1.5rem; }
+.undecided-block .detail-section { page-break-before: avoid; border-top: 1px solid var(--border); margin-top: 1rem; padding-top: 1.5rem; }
+.undecided-block.detail-section { page-break-before: always; }
+.screenshot-box .caption { padding: 0.4rem 0.8rem; background: #f8fafc; font-size: 0.75rem; color: var(--muted); border-top: 1px solid var(--border); }
+
+/* Trend table */
+.monthly-trend { margin: 1.25rem 0; }
+.monthly-trend .bar-chart { height: 120px; gap: 2px; padding-bottom: 1.6rem; }
+.monthly-trend .bar { width: 85%; }
+.monthly-trend .bar-label { font-size: 0.52rem; bottom: -1.45rem; }
+.monthly-trend .bar-value { font-size: 0.48rem; top: -1rem; display: none; }
+.monthly-trend .bar-group:hover .bar-value { display: block; }
+.monthly-trend h4 { font-size: 0.95rem; }
+.trend-table th { background: var(--uagc-red); font-size: 0.68rem; padding: 0.3rem 0.4rem; }
+.trend-table td { font-size: 0.65rem; padding: 0.2rem 0.35rem; }
+
+/* Program flow migration */
+.flow-block { margin: 1rem 0 1.5rem; }
+.flow-card { margin: 0 0 1rem; }
+.flow-card:last-child { margin-bottom: 0; }
+.flow-card h4 { color: var(--uagc-dark); margin-bottom: 0.35rem; font-size: 1.05rem; }
+.flow-footnote { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.6rem; }
+.flow-summary { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; font-size: 0.78rem; margin-bottom: 0.75rem; padding: 0.6rem 0.85rem; background: #f8f9fa; border-radius: 8px; border: 1px solid var(--border); }
+.flow-summary .flow-net { color: var(--uagc-dark); font-weight: 600; }
+.flow-table { font-size: 0.78rem; margin-top: 0.25rem; }
+.flow-table th { background: var(--uagc-dark); font-size: 0.72rem; }
+.flow-table th:nth-child(2), .flow-table th:nth-child(3) { text-align: right; }
+.flow-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.flow-table td.pct { color: var(--muted); font-size: 0.72rem; }
+.flow-section-row td { background: #eef1f4; font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--uagc-dark); padding: 0.35rem 0.7rem; }
+.flow-same td { background: #fafbfc; }
+.flow-other td { font-style: italic; color: var(--muted); }
+.net-positive { color: var(--green); font-weight: 600; }
+.net-negative { color: var(--red); font-weight: 600; }
+
+/* Enrolled student demographics */
+.demo-card { margin: 1rem 0 1.5rem; }
+.demo-card h4 { color: var(--uagc-dark); margin-bottom: 0.35rem; font-size: 1.05rem; }
+.demo-count { font-size: 0.9rem; color: var(--uagc-dark); font-weight: 600; margin-bottom: 0.6rem; }
+.demo-highlights { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+.highlight-stat { display: inline-flex; align-items: center; gap: 0.25rem; background: #f8f9fa; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.78rem; border: 1px solid var(--border); }
+.highlight-stat strong { color: var(--uagc-dark); }
+.idx-badge { font-size: 0.65rem; background: var(--uagc-dark); color: white; padding: 0.1rem 0.4rem; border-radius: 8px; margin-left: 0.15rem; }
+.profile-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.profile-card { background: #f8fafc; border-radius: 10px; padding: 1rem; border: 1px solid var(--border); }
+.profile-card--wide { grid-column: 1 / -1; }
+.profile-card h5 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.65rem; }
+.comp-strip { margin-top: 0.15rem; }
+.comp-bar { display: flex; width: 100%; height: 36px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15); }
+.comp-seg { display: flex; align-items: center; justify-content: center; min-width: 1.75rem; overflow: hidden; }
+.comp-seg--narrow { min-width: 2.35rem; }
+.comp-seg-in { display: inline-flex; align-items: center; justify-content: center; gap: 0.2rem; font-size: 0.6rem; font-weight: 700; line-height: 1.1; text-align: center; padding: 0 2px; white-space: nowrap; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+.comp-seg--narrow .comp-seg-in { flex-direction: column; gap: 0; font-size: 0.52rem; line-height: 1.05; white-space: normal; }
+.comp-seg-in .comp-lbl { display: block; }
+.comp-seg-in .comp-pct { display: block; font-size: 0.5rem; font-weight: 600; opacity: 0.95; }
+.age-distribution { display: flex; gap: 0.4rem; }
+.age-bucket { flex: 1; text-align: center; padding: 0.45rem; background: #f1f5f9; border-radius: 8px; }
+.age-bucket .value { font-size: 1rem; font-weight: 700; color: var(--uagc-dark); }
+.age-bucket .label { font-size: 0.62rem; color: var(--muted); margin-top: 0.15rem; }
+.demo-age-note { margin-top: 0.5rem; font-size: 0.72rem; color: var(--muted); }
+.demo-empty { font-size: 0.75rem; color: var(--muted); }
+
+/* Detail widgets: segment + LOB */
+.detail-widgets { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0 1.5rem; }
+.widget-card { margin: 0; }
+.widget-card h4 { color: var(--uagc-dark); margin-bottom: 0.35rem; font-size: 1.05rem; }
+.widget-comp-row { margin-bottom: 1rem; }
+.widget-comp-row:last-child { margin-bottom: 0; }
+.widget-comp-head { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 0.35rem; display: flex; justify-content: space-between; }
+.widget-comp-total { font-weight: 500; color: var(--uagc-dark); text-transform: none; letter-spacing: 0; }
+
+/* Navigation */
+.back-to-top { position: fixed; bottom: 2rem; right: 2rem; background: var(--uagc-red); color: white; padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none; font-size: 0.8rem; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 100; }
+
+@media print {
+    .container { max-width: 100%; padding: 0.5rem; }
+    .detail-section { page-break-before: always; }
+    .back-to-top { display: none; }
+    .tabs { display: none; }
+    .tab-content { display: block !important; }
+}
+@media (max-width: 768px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .screenshots { grid-template-columns: 1fr; }
+    .profile-grid { grid-template-columns: 1fr; }
+    .detail-widgets { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<p class="subtitle">Preview: enrolled student profile + program summary changes (not deployed to Pages yet).</p>
+    <div class="detail-section" id="ba-in-psychology">
+        <div class="detail-header">
+            <h3>BA in Psychology</h3>
+            <p class="meta">Undergraduate | Bachelors | <a href="https://www.uagc.edu/online-degrees/bachelors/psychology" target="_blank">View Landing Page &rarr;</a></p>
+            <p class="meta">Metrics: Oct 2025 – Mar 2026 vs prior Apr – Sep 2025</p>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi"><div class="value">8,571</div><div class="label">Leads (Oct 2025 – Mar 2026)</div><span class="change down">&#9660; -66%</span></div>
+            <div class="kpi"><div class="value">2,058</div><div class="label">Apps Started</div><span class="change down">&#9660; -37%</span></div>
+            <div class="kpi"><div class="value">601</div><div class="label">Decisions</div><span class="change down">&#9660; -36%</span></div>
+            <div class="kpi"><div class="value">146</div><div class="label">Final Enrollments</div><span class="change down">&#9660; -49%</span></div>
+        </div>
+
+<div class="card prose-card">
+<h4>Program summary</h4>
+<p><strong>BA in Psychology</strong> generated <strong>8,571</strong> inquiries in Oct 2025 – Mar 2026 (down 66% vs Apr – Sep 2025), ranking top-tier (#6 of 47) among 47 programs at the same degree level.</p>
+<p>The program recorded <strong>146</strong> final enrollments (1.70% of inquiries), near the peer median inquiry-to-enrollment rate (peer median ~1.68%).</p>
+<p><strong>Lead sources:</strong> largest segment Affiliate - Search (37.1% of leads); navigational mix 20.9% (Brand Search + Organic).</p>
+<p><strong>How enrollees differ from average:</strong> Among 212 matriculants, median age <strong>32</strong> matches the undergraduate enrolled average (33); <strong>78.2%</strong> female, 18 pts above the undergraduate share (60.5%) — a notably more female cohort; largest ethnicity group is <strong>White</strong> (49.0%), 6 pts above the undergraduate norm for White (42.9%); line of business skews to <strong>Core</strong> (55.2%), 16 pts above typical undergraduate mix for Core (38.9%); Core share is <strong>55.2%</strong> (16 pts above undergraduate Core at 38.9%). Comparisons use all undergraduate enrolled students in the same window.</p>
+<p><strong>Geography:</strong> strongest enrollment region is <strong>Southeast</strong> (31.6% of matriculants).</p>
+<p><strong>Program migration:</strong> gains <strong>5</strong> final enrollments vs same-path inquiry (272 stayed on-program; net +1.6% of applied enrollments).</p>
+</div>
+<div class="detail-widgets">
+<div class="card widget-card">
+<h4>Marketing segment mix</h4>
+<p class="flow-footnote">Share of inquiry leads and final enrollments (Oct 2025 – Mar 2026) by <code>marketing_segment_rollup</code> (unknown/other excluded).</p>
+<div class="widget-comp-row">
+<div class="widget-comp-head">Leads<span class="widget-comp-total">8,566</span></div>
+<div class="comp-strip" role="group" aria-label="Marketing segment — leads">
+<div class="comp-bar" role="img">
+<div class="comp-seg" style="flex:167 1 0;background:#059669;" title="Organic: 16.7%"><span class="comp-seg-in" style="color:#ffffff;">Organic 17%</span></div>
+<div class="comp-seg" style="flex:172 1 0;background:#4f46e5;" title="Display: 17.2%"><span class="comp-seg-in" style="color:#ffffff;">Display 17%</span></div>
+<div class="comp-seg" style="flex:149 1 0;background:#7c3aed;" title="Affiliate: 14.9%"><span class="comp-seg-in" style="color:#ffffff;"><span class="comp-lbl">Affiliate</span><span class="comp-pct">15%</span></span></div>
+<div class="comp-seg" style="flex:371 1 0;background:#a855f7;" title="Affiliate - Search: 37.1%"><span class="comp-seg-in" style="color:#ffffff;">Affiliate - Search 37%</span></div>
+<div class="comp-seg comp-seg--narrow" style="flex:99 1 0;background:#0ea5e9;" title="Non Brand - Search: 9.9%"><span class="comp-seg-in" style="color:#ffffff;"><span class="comp-lbl">Non Brand - Search</span><span class="comp-pct">10%</span></span></div>
+<div class="comp-seg comp-seg--narrow" style="flex:42 1 0;background:#0284c7;" title="Brand - Search: 4.2%"><span class="comp-seg-in" style="color:#ffffff;"><span class="comp-lbl">Brand - Search</span><span class="comp-pct">4%</span></span></div>
+</div></div>
+</div>
+<div class="widget-comp-row">
+<div class="widget-comp-head">Final enrollments<span class="widget-comp-total">146</span></div>
+<div class="comp-strip" role="group" aria-label="Marketing segment — enrollments">
+<div class="comp-bar" role="img">
+<div class="comp-seg" style="flex:247 1 0;background:#059669;" title="Organic: 24.7%"><span class="comp-seg-in" style="color:#ffffff;">Organic 25%</span></div>
+<div class="comp-seg comp-seg--narrow" style="flex:62 1 0;background:#4f46e5;" title="Display: 6.2%"><span class="comp-seg-in" style="color:#ffffff;"><span class="comp-lbl">Display</span><span class="comp-pct">6%</span></span></div>
+<div class="comp-seg comp-seg--narrow" style="flex:48 1 0;background:#7c3aed;" title="Affiliate: 4.8%"><span class="comp-seg-in" style="color:#ffffff;"><span class="comp-lbl">Affiliate</span><span class="comp-pct">5%</span></span></div>
+<div class="comp-seg" style="flex:274 1 0;background:#a855f7;" title="Affiliate - Search: 27.4%"><span class="comp-seg-in" style="color:#ffffff;">Affiliate - Search 27%</span></div>
+<div class="comp-seg" style="flex:192 1 0;background:#0ea5e9;" title="Non Brand - Search: 19.2%"><span class="comp-seg-in" style="color:#ffffff;">Non Brand - Search 19%</span></div>
+<div class="comp-seg" style="flex:178 1 0;background:#0284c7;" title="Brand - Search: 17.8%"><span class="comp-seg-in" style="color:#ffffff;">Brand - Search 18%</span></div>
+</div></div>
+</div>
+</div>
+<div class="card widget-card">
+<h4>Enrollments by line of business</h4>
+<p class="flow-footnote">Share of enrolled students (12-month matric) from StudentRevenueMaster: Core, Full Tuition Grant, Tuition Benefit, Military.</p>
+<div class="widget-comp-row">
+<div class="widget-comp-head">Enrolled students<span class="widget-comp-total">212</span></div>
+<div class="comp-strip" role="group" aria-label="Line of business — enrollments">
+<div class="comp-bar" role="img">
+<div class="comp-seg" style="flex:552 1 0;background:#0C234B;" title="Core: 55.2%"><span class="comp-seg-in" style="color:#ffffff;">Core 55%</span></div>
+<div class="comp-seg comp-seg--narrow" style="flex:137 1 0;background:#AB0520;" title="Full Tuition Grant: 13.7%"><span class="comp-seg-in" style="color:#ffffff;"><span class="comp-lbl">Full Tuition Grant</span><span class="comp-pct">14%</span></span></div>
+<div class="comp-seg comp-seg--narrow" style="flex:85 1 0;background:#0076A8;" title="Tuition Benefit: 8.5%"><span class="comp-seg-in" style="color:#ffffff;"><span class="comp-lbl">Tuition Benefit</span><span class="comp-pct">8%</span></span></div>
+<div class="comp-seg" style="flex:226 1 0;background:#4a7089;" title="Military: 22.6%"><span class="comp-seg-in" style="color:#ffffff;">Military 23%</span></div>
+</div></div>
+</div>
+</div>
+</div>
+<div class="card sankey-card">
+<h4>Lead inflow &amp; funnel (Sankey)</h4>
+<p class="flow-footnote">Marketing segments flow into inquiries, then through the funnel; gray branches are drop-offs. Width = volume.</p>
+<div class="sankey-host" id="sankey-001Do00000ScUzFIAV" data-pid="001Do00000ScUzFIAV"></div>
+</div>
+<div class="flow-block">
+<div class="card flow-card">
+<h4>Program enrollments — where they came from</h4>
+<p class="flow-footnote">Final enrollment (<code>is_new_enrollment_final</code>), grouped by <strong>applied</strong> program. Same academic level. Undecided inquiry programs → <strong>Undecided</strong>.</p>
+<div class="flow-summary"><span><strong>310</strong> final enrollments (applied)</span><span><strong>272</strong> same inquiry</span><span>Gained <strong>38</strong></span><span>Lost <strong>33</strong></span><span class="flow-net">Net <strong>+5</strong> (+1.6% of enrollments; +1.8% vs same-path)</span></div><table class="flow-table"><thead><tr><th>Inquiry program</th><th>Final enrollments</th><th>%</th><th>Applied (enrolled) program</th></tr></thead><tbody>
+<tr class="flow-same"><td><strong>BA in Psychology</strong></td><td class="num">272</td><td class="num pct">87.7%</td><td><strong>BA in Psychology</strong></td></tr>
+<tr class="flow-section-row"><td colspan="4">Into this program</td></tr>
+<tr class=""><td>Undecided</td><td class="num">9</td><td class="num pct">2.9%</td><td><strong>BA in Psychology</strong></td></tr>
+<tr class=""><td>BA in Applied Behavioral Science</td><td class="num">7</td><td class="num pct">2.3%</td><td><strong>BA in Psychology</strong></td></tr>
+<tr class=""><td>BA in Health & Human Services</td><td class="num">7</td><td class="num pct">2.3%</td><td><strong>BA in Psychology</strong></td></tr>
+<tr class="flow-other"><td>Other programs</td><td class="num">15</td><td class="num pct">4.8%</td><td><strong>BA in Psychology</strong></td></tr>
+<tr class="flow-section-row"><td colspan="4">Enrolled in a different program</td></tr>
+<tr class=""><td><strong>BA in Psychology</strong></td><td class="num">17</td><td class="num pct">5.6%</td><td>BA in Applied Behavioral Science</td></tr>
+<tr class=""><td><strong>BA in Psychology</strong></td><td class="num">4</td><td class="num pct">1.3%</td><td>BA in Social and Criminal Justice</td></tr>
+<tr class=""><td><strong>BA in Psychology</strong></td><td class="num">2</td><td class="num pct">0.7%</td><td>BA in Business Administration</td></tr>
+<tr class="flow-other"><td><strong>BA in Psychology</strong></td><td class="num">10</td><td class="num pct">3.3%</td><td>Other programs</td></tr>
+</tbody></table></div>
+<div class="card flow-card">
+<h4>Inquiry cohort — where leads enrolled</h4>
+<p class="flow-footnote">Cohorted by <strong>inquiry</strong> program (12-month inquiries). Enrollment rate = sum(<code>is_new_enrollment_final</code>) ÷ leads.</p>
+<div class="flow-summary"><span><strong>28,979</strong> inquiry leads (12 mo)</span><span><strong>326</strong> final enrollments</span><span>Rate <strong>1.12%</strong></span><span>In this program <strong>272</strong></span><span>Elsewhere <strong>54</strong></span></div><table class="flow-table"><thead><tr><th>Inquiry program</th><th>Final enrollments</th><th>%</th><th>Applied (enrolled) program</th></tr></thead><tbody>
+<tr class="flow-same"><td><strong>BA in Psychology</strong></td><td class="num">272</td><td class="num pct">83.4%</td><td><strong>BA in Psychology</strong></td></tr>
+<tr class="flow-section-row"><td colspan="4">Enrolled in a different program</td></tr>
+<tr class=""><td><strong>BA in Psychology</strong></td><td class="num">17</td><td class="num pct">5.2%</td><td>BA in Applied Behavioral Science</td></tr>
+<tr class=""><td><strong>BA in Psychology</strong></td><td class="num">4</td><td class="num pct">1.2%</td><td>BA in Social and Criminal Justice</td></tr>
+<tr class=""><td><strong>BA in Psychology</strong></td><td class="num">2</td><td class="num pct">0.6%</td><td>BA in Business Administration</td></tr>
+<tr class="flow-other"><td><strong>BA in Psychology</strong></td><td class="num">10</td><td class="num pct">3.1%</td><td>Other programs</td></tr>
+</tbody></table></div>
+</div>
+<div class="card demo-card">
+<h4>Enrolled student profile</h4>
+<p class="flow-footnote">Students matriculated (Oct 2025 – Mar 2026) via StudentRevenueMaster / program bridge. Indexed highlights compare to <strong>undergraduate</strong> enrolled baseline.</p>
+<p class="demo-count">212 enrolled students</p>
+<div class="demo-highlights">
+<span class="highlight-stat">Median age: <strong>32</strong></span>
+<span class="highlight-stat">Female: <strong>77.8%</strong> <span class="idx-badge">idx 129</span></span>
+<span class="highlight-stat">Core: <strong>55.2%</strong></span>
+</div>
+<div class="profile-grid">
+<div class="profile-card"><h5>Gender</h5><div class="comp-strip" role="group" aria-label="Gender">
+<div class="comp-bar" role="img">
+<div class="comp-seg" style="flex:218 1 0;background:#0C234B;" title="Male: 21.8%"><span class="comp-seg-in" style="color:#ffffff;">Male 22%</span></div>
+<div class="comp-seg" style="flex:782 1 0;background:#AB0520;" title="Female: 78.2%"><span class="comp-seg-in" style="color:#ffffff;">Female 78%</span></div>
+</div></div>
+</div>
+<div class="profile-card"><h5>Race / ethnicity</h5><div class="comp-strip" role="group" aria-label="Race">
+<div class="comp-bar" role="img">
+<div class="comp-seg" style="flex:301 1 0;background:#0C234B;" title="Black: 30.1%"><span class="comp-seg-in" style="color:#ffffff;">Black 30%</span></div>
+<div class="comp-seg" style="flex:490 1 0;background:#98A4AE;" title="White: 49.0%"><span class="comp-seg-in" style="color:#ffffff;">White 49%</span></div>
+<div class="comp-seg comp-seg--narrow" style="flex:57 1 0;background:#378DBD;" title="Hispanic: 5.7%"><span class="comp-seg-in" style="color:#ffffff;"><span class="comp-lbl">Hispanic</span><span class="comp-pct">6%</span></span></div>
+<div class="comp-seg" style="flex:152 1 0;background:#EF9600;" title="Other: 15.2%"><span class="comp-seg-in" style="color:#ffffff;">Other 15%</span></div>
+</div></div>
+</div>
+<div class="profile-card"><h5>Line of business</h5><div class="comp-strip" role="group" aria-label="Line of business">
+<div class="comp-bar" role="img">
+<div class="comp-seg" style="flex:552 1 0;background:#0C234B;" title="Core: 55.2%"><span class="comp-seg-in" style="color:#ffffff;">Core 55%</span></div>
+<div class="comp-seg" style="flex:226 1 0;background:#4a7089;" title="Military: 22.6%"><span class="comp-seg-in" style="color:#ffffff;">Military 23%</span></div>
+<div class="comp-seg comp-seg--narrow" style="flex:137 1 0;background:#AB0520;" title="FTG: 13.7%"><span class="comp-seg-in" style="color:#ffffff;"><span class="comp-lbl">FTG</span><span class="comp-pct">14%</span></span></div>
+<div class="comp-seg comp-seg--narrow" style="flex:85 1 0;background:#0076A8;" title="TB: 8.5%"><span class="comp-seg-in" style="color:#ffffff;"><span class="comp-lbl">TB</span><span class="comp-pct">8%</span></span></div>
+</div></div>
+</div>
+<div class="profile-card"><h5>Age at matriculation</h5><div class="age-distribution">
+<div class="age-bucket"><div class="value">16.5%</div><div class="label">Under 25</div></div>
+<div class="age-bucket"><div class="value">43.4%</div><div class="label">25–34</div></div>
+<div class="age-bucket"><div class="value">23.6%</div><div class="label">35–44</div></div>
+<div class="age-bucket"><div class="value">16.5%</div><div class="label">45+</div></div>
+</div>
+<p class="demo-age-note">Mean 33.7 | Median 32</p>
+</div>
+<div class="profile-card"><h5>Marital status</h5><div class="comp-strip" role="group" aria-label="Marital status">
+<div class="comp-bar" role="img">
+<div class="comp-seg" style="flex:686 1 0;background:#0C234B;" title="Single: 68.6%"><span class="comp-seg-in" style="color:#ffffff;">Single 69%</span></div>
+<div class="comp-seg" style="flex:231 1 0;background:#AB0520;" title="Married: 23.1%"><span class="comp-seg-in" style="color:#ffffff;">Married 23%</span></div>
+<div class="comp-seg comp-seg--narrow" style="flex:83 1 0;background:#378DBD;" title="Divorced: 8.3%"><span class="comp-seg-in" style="color:#ffffff;"><span class="comp-lbl">Divorced</span><span class="comp-pct">8%</span></span></div>
+</div></div>
+</div>
+</div></div>
+<div class="card region-card">
+<h4>Enrollment geography</h4>
+<p class="flow-footnote">US region share of enrolled students (matric window). Only regions ≥5% shown; indexed vs same degree-level baseline.</p>
+<div class="region-bars">
+<div class="region-row"><span class="region-label">Southeast</span><div class="region-bar-bg"><div class="region-bar-fill" style="width:31.6%"></div></div><span class="region-pct">31.6% <span class="idx-badge">idx 107</span></span></div>
+<div class="region-row"><span class="region-label">Southwest</span><div class="region-bar-bg"><div class="region-bar-fill" style="width:25.5%"></div></div><span class="region-pct">25.5% <span class="idx-badge">idx 92</span></span></div>
+<div class="region-row"><span class="region-label">West</span><div class="region-bar-bg"><div class="region-bar-fill" style="width:18.4%"></div></div><span class="region-pct">18.4% <span class="idx-badge">idx 106</span></span></div>
+<div class="region-row"><span class="region-label">Midwest</span><div class="region-bar-bg"><div class="region-bar-fill" style="width:14.2%"></div></div><span class="region-pct">14.2% <span class="idx-badge">idx 97</span></span></div>
+<div class="region-row"><span class="region-label">Northeast</span><div class="region-bar-bg"><div class="region-bar-fill" style="width:9.0%"></div></div><span class="region-pct">9.0% <span class="idx-badge">idx 89</span></span></div>
+</div></div>
+        <div class="chart-container monthly-trend">
+        <h4 style="margin-bottom:0.5rem; color:var(--uagc-dark)">Monthly volume (Apr 2025 – May 2026)</h4>
+        <div class="bar-chart">
+            <div class="bar-group" title="2025-04: 4,978 leads"><div class="bar-value">4,978</div><div class="bar" style="height:99px"></div><div class="bar-label">25-04</div></div>
+            <div class="bar-group" title="2025-05: 4,584 leads"><div class="bar-value">4,584</div><div class="bar" style="height:91px"></div><div class="bar-label">25-05</div></div>
+            <div class="bar-group" title="2025-06: 4,992 leads"><div class="bar-value">4,992</div><div class="bar" style="height:100px"></div><div class="bar-label">25-06</div></div>
+            <div class="bar-group" title="2025-07: 4,083 leads"><div class="bar-value">4,083</div><div class="bar" style="height:81px"></div><div class="bar-label">25-07</div></div>
+            <div class="bar-group" title="2025-08: 4,045 leads"><div class="bar-value">4,045</div><div class="bar" style="height:81px"></div><div class="bar-label">25-08</div></div>
+            <div class="bar-group" title="2025-09: 2,751 leads"><div class="bar-value">2,751</div><div class="bar" style="height:55px"></div><div class="bar-label">25-09</div></div>
+            <div class="bar-group" title="2025-10: 2,105 leads"><div class="bar-value">2,105</div><div class="bar" style="height:42px"></div><div class="bar-label">25-10</div></div>
+            <div class="bar-group" title="2025-11: 1,389 leads"><div class="bar-value">1,389</div><div class="bar" style="height:27px"></div><div class="bar-label">25-11</div></div>
+            <div class="bar-group" title="2025-12: 869 leads"><div class="bar-value">869</div><div class="bar" style="height:17px"></div><div class="bar-label">25-12</div></div>
+            <div class="bar-group" title="2026-01: 1,649 leads"><div class="bar-value">1,649</div><div class="bar" style="height:33px"></div><div class="bar-label">26-01</div></div>
+            <div class="bar-group" title="2026-02: 1,181 leads"><div class="bar-value">1,181</div><div class="bar" style="height:23px"></div><div class="bar-label">26-02</div></div>
+            <div class="bar-group" title="2026-03: 1,378 leads"><div class="bar-value">1,378</div><div class="bar" style="height:27px"></div><div class="bar-label">26-03</div></div>
+            <div class="bar-group" title="2026-04: 1,714 leads"><div class="bar-value">1,714</div><div class="bar" style="height:34px"></div><div class="bar-label">26-04</div></div>
+            <div class="bar-group" title="2026-05: 1,692 leads"><div class="bar-value">1,692</div><div class="bar" style="height:33px"></div><div class="bar-label">26-05</div></div>
+        </div>
+        </div>
+
+        <table class="trend-table" style="margin-top:1.25rem">
+<thead><tr><th>Month</th><th>Leads</th><th>Apps</th><th>Submits</th><th>Dec</th><th>Enrl</th><th>App%</th><th>Dec%</th></tr></thead>
+<tbody>
+        <tr><td>2025-04</td><td>4,978</td><td>534</td><td>306</td><td>148</td><td>47</td><td>10.7%</td><td>3.0%</td></tr>
+        <tr><td>2025-05</td><td>4,584</td><td>600</td><td>370</td><td>190</td><td>65</td><td>13.1%</td><td>4.1%</td></tr>
+        <tr><td>2025-06</td><td>4,992</td><td>533</td><td>301</td><td>155</td><td>40</td><td>10.7%</td><td>3.1%</td></tr>
+        <tr><td>2025-07</td><td>4,083</td><td>466</td><td>276</td><td>151</td><td>40</td><td>11.4%</td><td>3.7%</td></tr>
+        <tr><td>2025-08</td><td>4,045</td><td>615</td><td>314</td><td>161</td><td>52</td><td>15.2%</td><td>4.0%</td></tr>
+        <tr><td>2025-09</td><td>2,751</td><td>531</td><td>292</td><td>140</td><td>41</td><td>19.3%</td><td>5.1%</td></tr>
+        <tr><td>2025-10</td><td>2,105</td><td>415</td><td>219</td><td>100</td><td>24</td><td>19.7%</td><td>4.8%</td></tr>
+        <tr><td>2025-11</td><td>1,389</td><td>283</td><td>146</td><td>81</td><td>23</td><td>20.4%</td><td>5.8%</td></tr>
+        <tr><td>2025-12</td><td>869</td><td>236</td><td>137</td><td>78</td><td>23</td><td>27.2%</td><td>9.0%</td></tr>
+        <tr><td>2026-01</td><td>1,649</td><td>412</td><td>216</td><td>126</td><td>31</td><td>25.0%</td><td>7.6%</td></tr>
+        <tr><td>2026-02</td><td>1,181</td><td>326</td><td>159</td><td>95</td><td>27</td><td>27.6%</td><td>8.0%</td></tr>
+        <tr><td>2026-03</td><td>1,378</td><td>386</td><td>211</td><td>121</td><td>18</td><td>28.0%</td><td>8.8%</td></tr>
+        <tr><td>2026-04</td><td>1,714</td><td>435</td><td>219</td><td>108</td><td>2</td><td>25.4%</td><td>6.3%</td></tr>
+        <tr><td>2026-05</td><td>1,692</td><td>417</td><td>197</td><td>91</td><td>0</td><td>24.6%</td><td>5.4%</td></tr>
+        </tbody></table>
+
+        <h4 style="margin:1.5rem 0 0.8rem; color:var(--uagc-dark)">Landing Page</h4>
+        <div class="screenshots">
+            <div class="screenshot-column">
+                <div class="screenshot-column-title">Desktop</div>
+<div class="screenshot-box"><img src="screenshots/desktop_001Do00000ScUzFIAV.png" alt="Page 1 — hero / top" loading="lazy"><div class="caption">Page 1 — hero / top</div></div>
+<div class="screenshot-box"><img src="screenshots/desktop_001Do00000ScUzFIAV_page2.png" alt="Page 2 — scroll" loading="lazy"><div class="caption">Page 2 — scroll</div></div>
+            </div>
+            <div class="screenshot-column">
+                <div class="screenshot-column-title">Mobile</div>
+<div class="screenshot-box"><img src="screenshots/mobile_001Do00000ScUzFIAV.png" alt="Page 1 — hero / top" loading="lazy"><div class="caption">Page 1 — hero / top</div></div>
+<div class="screenshot-box"><img src="screenshots/mobile_001Do00000ScUzFIAV_page2.png" alt="Page 2 — scroll" loading="lazy"><div class="caption">Page 2 — scroll</div></div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+</body>
+</html>

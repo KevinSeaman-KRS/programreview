@@ -1,0 +1,31 @@
+---
+description: "Hardens code against vulnerabilities. Use when handling user input, auth, data storage, or external integrations."
+alwaysApply: false
+---
+
+# Security & Hardening — Three-Tier Boundary System
+
+## ALWAYS DO (no exceptions)
+
+- Validate all external input at API boundaries
+- Parameterize all database queries — never concatenate user input into SQL
+- Use framework auto-escaping for output
+- Hash passwords with bcrypt/scrypt/argon2
+- Use httpOnly, secure, sameSite cookies for sessions
+- Run `pip-audit` or `safety check` before releases
+
+## ASK FIRST (requires human approval)
+
+- Adding new authentication flows
+- Storing new categories of sensitive data
+- Adding new external service integrations
+- Changing CORS configuration
+- Modifying rate limiting
+
+## NEVER DO
+
+- Commit secrets to version control (API keys, passwords, tokens)
+- Log sensitive data (passwords, tokens, full credit card numbers)
+- Trust client-side validation as a security boundary
+- Use `eval()` or equivalent with user-provided data
+- Expose stack traces or internal error details to users

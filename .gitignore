@@ -1,0 +1,56 @@
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Data files (pulled from databases — regenerate with pull_*.py scripts)
+data/
+
+# Screenshots (generated — regenerate with capture_*.py scripts)
+screenshots/
+deploy/screenshots/
+
+# Large generated HTML reports
+program_report.html
+program_report_poc.html
+profile_poc.html
+sankey_poc.html
+sankey_options.html
+
+# Large generated JSON data (regenerate with pull_*.py scripts)
+program_data_full.json
+program_demographics.json
+program_detail_widgets.json
+program_migration.json
+program_sankey_flow.json
+program_metrics.json
+program_metrics_filtered.json
+demographics.json
+program_monthly.json
+qa_outlier_programs.json
+
+# Database files
+*.db
+*.db-wal
+*.db-shm
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Environment / secrets
+.env
+.env.*

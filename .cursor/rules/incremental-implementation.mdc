@@ -1,0 +1,25 @@
+---
+description: "Delivers changes incrementally. Use when implementing any feature that touches more than one file."
+alwaysApply: false
+---
+
+# Incremental Implementation
+
+Build in thin vertical slices — implement, test, verify, commit, then expand. Each increment leaves the system in a working state.
+
+## Principles
+
+- **Simplicity first:** "What is the simplest thing that could work?"
+- **Scope discipline:** Touch ONLY what the task requires — no drive-by cleanups, no refactoring imports in files you're just reading
+- **One thing at a time:** Each increment changes one logical thing
+- **Keep it compilable:** Project must build and tests must pass after every increment
+- **Safe defaults:** New code defaults to conservative behavior
+- **Rollback-friendly:** Each increment independently revertable
+
+## Red Flags
+
+- More than 100 lines written without running tests
+- Multiple unrelated changes in a single increment
+- "Let me just quickly add this too" scope expansion
+- Touching files outside task scope "while I'm here"
+- Building abstractions before the third use case demands it
