@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UAGC Program Changes &amp; Mix Insights</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --uagc-red: #AB0520;
+  --uagc-dark: #0C234B;
+  --highlight-blue: #0076A8;
+  --text: #53565A;
+  --muted: #98A4AE;
+  --border: #D0D0CE;
+  --surface: #f4f4f3;
+  --card: #fff;
+}
+* { box-sizing: border-box; }
+body {
+  font-family: Montserrat, system-ui, sans-serif;
+  color: var(--text); background: var(--surface);
+  margin: 0; line-height: 1.5;
+}
+.container { max-width: 960px; margin: 0 auto; padding: 1.25rem 1rem 2rem; }
+header { border-bottom: 3px solid var(--uagc-red); padding-bottom: 0.75rem; margin-bottom: 1rem; }
+h1 { color: var(--uagc-dark); font-size: 1.35rem; margin: 0 0 0.25rem; }
+.subtitle { color: var(--muted); font-size: 0.85rem; margin: 0; }
+.tabs { display: flex; flex-wrap: wrap; gap: 0; margin: 1rem 0 0; }
+.tab {
+  padding: 0.5rem 1rem; cursor: pointer; border: 1px solid var(--border);
+  border-bottom: none; background: var(--surface); color: var(--muted);
+  font-weight: 600; font-size: 0.78rem; border-radius: 6px 6px 0 0;
+}
+.tab.active { background: var(--card); color: var(--uagc-dark); }
+.tab-panel {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 0 6px 6px 6px; padding: 1rem 1.1rem;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.panel-section { margin-bottom: 1.5rem; }
+.panel-section h2 { color: var(--uagc-dark); font-size: 1.05rem; margin: 0 0 0.5rem; }
+.panel-section h3 { font-size: 0.92rem; color: var(--uagc-dark); margin: 1rem 0 0.4rem; }
+.panel-section h4 { font-size: 0.82rem; margin: 0.75rem 0 0.35rem; }
+.lead { font-size: 0.88rem; max-width: 44rem; margin-bottom: 0.75rem; }
+.insight-list { font-size: 0.85rem; margin: 0.5rem 0 1rem 1.2rem; }
+.insight-list li { margin-bottom: 0.35rem; }
+.data-table {
+  width: 100%; border-collapse: collapse; font-size: 0.78rem; margin: 0.5rem 0 1rem;
+}
+.data-table th, .data-table td {
+  border: 1px solid var(--border); padding: 0.35rem 0.5rem; text-align: right;
+}
+.data-table th:first-child, .data-table td:first-child { text-align: left; }
+.data-table th { background: var(--uagc-dark); color: #fff; font-weight: 600; }
+.data-table tbody tr:nth-child(even) { background: var(--surface); }
+.muted { color: var(--muted); font-size: 0.8rem; }
+.note { margin-top: 1rem; }
+.tech-dl { font-size: 0.82rem; }
+.tech-dl dt { font-weight: 600; color: var(--uagc-dark); margin-top: 0.5rem; }
+.tech-dl dd { margin: 0.1rem 0 0 1rem; }
+a { color: var(--highlight-blue); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Program Changes &amp; Mix Insights</h1>
+    <p class="subtitle">YoY analysis · Jul 2025 – Jun 2026 vs Jul 2024 – Jun 2025 · July 06, 2026</p>
+    <p class="subtitle">Companion to the <a href="index.html">Program Performance Report</a> — analysis only, not embedded in program profiles.</p>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <div class="tab active" data-tab="analysis" role="tab">Analysis</div>
+    <div class="tab" data-tab="technical" role="tab">Technical</div>
+    <div class="tab" data-tab="roadmap" role="tab">Roadmap</div>
+  </div>
+  <div class="tab-panel">
+    <div id="tab-analysis" class="tab-content active">
+      
+    <section id="mix-analysis" class="panel-section">
+      <h2>Enrollment mix analysis</h2>
+      <p class="lead">
+        Portfolio composition for <strong>Jul 2025 – Jun 2026</strong> compared with
+        <strong>Jul 2024 – Jun 2025</strong>. LOB reflects SRM matriculations; degree-level
+        splits use BigQuery funnel enrollments and decisions.
+      </p>
+      <ul class="insight-list"><li>Enrollment mix shifted toward undergraduate programs (UG +3.4pp, Grad -3.4pp).</li></ul>
+      <section class="insight-block"><h3>Overall portfolio</h3>
+            <table class="data-table">
+              <thead><tr>
+                <th>Level</th>
+                <th colspan="3">Decisions mix</th>
+                <th colspan="3">Enrollment mix (BQ)</th>
+              </tr>
+              <tr><th></th>
+                <th>Current</th><th>Prior</th><th>Δ</th>
+                <th>Current</th><th>Prior</th><th>Δ</th>
+              </tr></thead>
+              <tbody><tr><td>Undergraduate</td><td>87.3%</td><td>84.9%</td><td>+2.4pp</td><td>79.6%</td><td>76.2%</td><td>+3.4pp</td></tr><tr><td>Graduate</td><td>12.7%</td><td>15.1%</td><td>-2.4pp</td><td>20.4%</td><td>23.8%</td><td>-3.4pp</td></tr></tbody>
+            </table>
+            
+        <h4>Enrollment LOB mix (SRM matriculations)</h4>
+        <table class="data-table">
+          <thead><tr><th>LOB</th><th>Current</th><th>Prior YoY</th><th>Δ</th></tr></thead>
+          <tbody><tr><td>Core</td><td>35.2%</td><td>33.9%</td><td>+1.3pp</td></tr><tr><td>Full Tuition Grant</td><td>38.7%</td><td>38.7%</td><td>0.0pp</td></tr><tr><td>Tuition Benefit</td><td>6.3%</td><td>6.6%</td><td>-0.3pp</td></tr><tr><td>Military</td><td>19.8%</td><td>20.8%</td><td>-1.0pp</td></tr></tbody>
+        </table>
+        </section>
+        <section class="insight-block"><h3>Undergraduate programs</h3>
+        <h4>Enrollment LOB mix (SRM matriculations)</h4>
+        <table class="data-table">
+          <thead><tr><th>LOB</th><th>Current</th><th>Prior YoY</th><th>Δ</th></tr></thead>
+          <tbody><tr><td>Core</td><td>40.4%</td><td>38.7%</td><td>+1.7pp</td></tr><tr><td>Full Tuition Grant</td><td>32.0%</td><td>33.0%</td><td>-1.0pp</td></tr><tr><td>Tuition Benefit</td><td>6.3%</td><td>6.7%</td><td>-0.4pp</td></tr><tr><td>Military</td><td>21.3%</td><td>21.6%</td><td>-0.3pp</td></tr></tbody>
+        </table>
+        </section>
+        <section class="insight-block"><h3>Graduate programs</h3>
+        <h4>Enrollment LOB mix (SRM matriculations)</h4>
+        <table class="data-table">
+          <thead><tr><th>LOB</th><th>Current</th><th>Prior YoY</th><th>Δ</th></tr></thead>
+          <tbody><tr><td>Core</td><td>17.9%</td><td>16.5%</td><td>+1.4pp</td></tr><tr><td>Full Tuition Grant</td><td>60.9%</td><td>59.2%</td><td>+1.7pp</td></tr><tr><td>Tuition Benefit</td><td>6.4%</td><td>6.6%</td><td>-0.2pp</td></tr><tr><td>Military</td><td>14.8%</td><td>17.7%</td><td>-2.9pp</td></tr></tbody>
+        </table>
+        </section>
+        
+    </section>
+    
+      
+    <section id="program-changes" class="panel-section">
+      <h2>Program change insights</h2>
+      <p class="lead">
+        Year-over-year volume at the program level. Programs need at least
+        15 enrollments in either window to appear in mover tables.
+        Flagged changes use a ±5% enrollment threshold.
+      </p>
+      <h3>Portfolio funnel totals</h3>
+      <table class="data-table compact">
+        <thead><tr><th>Metric</th><th>Jul 2025 – Jun 2026</th><th>Jul 2024 – Jun 2025</th><th>YoY</th></tr></thead>
+        <tbody><tr><td>Leads</td><td>426,673</td><td>327,795</td><td>+30%</td></tr><tr><td>Decisions</td><td>25,551</td><td>21,384</td><td>+19%</td></tr><tr><td>Enrollments</td><td>6,633</td><td>8,675</td><td>-24%</td></tr></tbody>
+      </table>
+      <ul class="insight-list"><li>Largest enrollment gain: BA in Health and Wellness (NEW YoY).</li><li>Largest enrollment decline: BA in Early Childhood Development with Differentiated Instruction (-62% YoY).</li></ul>
+      
+    <h3>Enrollment gainers (YoY &gt; +5%)</h3>
+    <table class="data-table">
+      <thead><tr>
+        <th>Program</th><th>Level</th>
+        <th>Enrl (current)</th><th>Enrl (prior)</th><th>Enrl YoY</th>
+        <th>Decisions</th><th>Dec YoY</th>
+      </tr></thead>
+      <tbody><tr><td>BA in Health and Wellness</td><td>Undergraduate</td><td>42</td><td>0</td><td>NEW</td><td>223</td><td>NEW</td></tr><tr><td>BA in Business Economics</td><td>Undergraduate</td><td>19</td><td>0</td><td>NEW</td><td>167</td><td>NEW</td></tr><tr><td>BA in Supply Chain Management</td><td>Undergraduate</td><td>39</td><td>0</td><td>NEW</td><td>140</td><td>NEW</td></tr><tr><td>BA in Communication Studies</td><td>Undergraduate</td><td>19</td><td>0</td><td>NEW</td><td>111</td><td>NEW</td></tr><tr><td>AA in Business</td><td>Undergraduate</td><td>322</td><td>71</td><td>+354%</td><td>1,802</td><td>+532%</td></tr><tr><td>AA in Military Studies</td><td>Undergraduate</td><td>27</td><td>6</td><td>+350%</td><td>81</td><td>+479%</td></tr><tr><td>Undecided - Undecided</td><td>Undergraduate</td><td>324</td><td>77</td><td>+321%</td><td>732</td><td>+625%</td></tr><tr><td>AA in Organizational Management</td><td>Undergraduate</td><td>82</td><td>28</td><td>+193%</td><td>455</td><td>+559%</td></tr><tr><td>Undecided - Bachelors</td><td>Undergraduate</td><td>140</td><td>74</td><td>+89%</td><td>265</td><td>+123%</td></tr><tr><td>Undecided - Criminal Justice</td><td>Undergraduate</td><td>61</td><td>42</td><td>+45%</td><td>215</td><td>+119%</td></tr><tr><td>BA in Health and Human Services</td><td>Undergraduate</td><td>115</td><td>99</td><td>+16%</td><td>460</td><td>+78%</td></tr></tbody>
+    </table>
+    
+      
+    <h3>Enrollment decliners (YoY &lt; −5%)</h3>
+    <table class="data-table">
+      <thead><tr>
+        <th>Program</th><th>Level</th>
+        <th>Enrl (current)</th><th>Enrl (prior)</th><th>Enrl YoY</th>
+        <th>Decisions</th><th>Dec YoY</th>
+      </tr></thead>
+      <tbody><tr><td>BA in Early Childhood Development with Differentiated Instruction</td><td>Undergraduate</td><td>17</td><td>45</td><td>-62%</td><td>93</td><td>-22%</td></tr><tr><td>Undecided - Business</td><td>Undergraduate</td><td>106</td><td>274</td><td>-61%</td><td>299</td><td>-30%</td></tr><tr><td>BA in Organizational Management</td><td>Undergraduate</td><td>71</td><td>180</td><td>-61%</td><td>245</td><td>-38%</td></tr><tr><td>BA in Liberal Arts</td><td>Undergraduate</td><td>55</td><td>118</td><td>-53%</td><td>329</td><td>+0%</td></tr><tr><td>BS in Nursing</td><td>Undergraduate</td><td>37</td><td>76</td><td>-51%</td><td>89</td><td>-39%</td></tr><tr><td>Master of Information Systems Management</td><td>Graduate</td><td>37</td><td>75</td><td>-51%</td><td>117</td><td>-9%</td></tr><tr><td>Undecided - Liberal Arts</td><td>Undergraduate</td><td>8</td><td>16</td><td>-50%</td><td>37</td><td>+12%</td></tr><tr><td>BA in Finance</td><td>Undergraduate</td><td>123</td><td>238</td><td>-48%</td><td>425</td><td>-22%</td></tr><tr><td>Undecided - Masters</td><td>Graduate</td><td>52</td><td>100</td><td>-48%</td><td>89</td><td>-36%</td></tr><tr><td>BS in Information Technology</td><td>Undergraduate</td><td>97</td><td>182</td><td>-47%</td><td>514</td><td>+12%</td></tr><tr><td>BA in Operations Management and Analysis</td><td>Undergraduate</td><td>109</td><td>199</td><td>-45%</td><td>299</td><td>-21%</td></tr><tr><td>BA in Business Leadership</td><td>Undergraduate</td><td>145</td><td>257</td><td>-44%</td><td>599</td><td>-7%</td></tr></tbody>
+    </table>
+    
+      <p class="muted note">
+        Full per-program metrics remain in the
+        <a href="index.html">Program Performance Report</a> matrix and detail pages.
+        This document is the analysis layer only.
+      </p>
+    </section>
+    
+    </div>
+    <div id="tab-technical" class="tab-content">
+      
+    <section id="technical" class="panel-section">
+      <h2>Technical details</h2>
+      <dl class="tech-dl">
+        <dt>Primary window</dt><dd>Jul 2025 – Jun 2026</dd>
+        <dt>Prior YoY window</dt><dd>Jul 2024 – Jun 2025</dd>
+        <dt>Mix data</dt><dd><code>pull_portfolio_mix_yoy.py</code> → <code>portfolio_mix_yoy.json</code></dd>
+        <dt>Program volumes</dt><dd><code>pull_full_data.py</code> → <code>program_data_full.json</code></dd>
+        <dt>Regenerate</dt><dd><code>uv run python generate_program_insights.py</code></dd>
+      </dl>
+      <p class="muted">
+        Degree-level mix: BigQuery <code>vw_lead_extract_details</code> with
+        <code>is_new_enrollment_final</code> / <code>is_appin</code>.
+        LOB mix: SQL Server <code>StudentRevenueMaster</code> matric dates aligned to the same windows.
+      </p>
+    </section>
+    
+    </div>
+    <div id="tab-roadmap" class="tab-content">
+      
+    <section id="roadmap" class="panel-section">
+      <h2>Roadmap</h2>
+      <ul class="insight-list">
+        <li><strong>Done:</strong> Portfolio mix YoY (degree level + LOB) and program volume movers.</li>
+        <li><strong>Next:</strong> Segment / channel mix YoY at portfolio and level rollups.</li>
+        <li><strong>Next:</strong> Per-program LOB mix shift (standalone table, not on detail profiles).</li>
+        <li><strong>Later:</strong> Tie insights to Christine product-strategy framework (keep / reformat / restrict / exit).</li>
+      </ul>
+    </section>
+    
+    </div>
+  </div>
+</div>
+<script>
+(function() {
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.tab-content');
+  function activate(id) {
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === id));
+    panels.forEach(p => p.classList.toggle('active', p.id === 'tab-' + id));
+    history.replaceState(null, '', '#' + id);
+  }
+  tabs.forEach(t => t.addEventListener('click', () => activate(t.dataset.tab)));
+  const hash = location.hash.replace('#', '');
+  if (hash && document.getElementById('tab-' + hash)) activate(hash);
+})();
+</script>
+</body>
+</html>
