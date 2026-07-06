@@ -1,8 +1,8 @@
 """
-Pull program metrics for fixed 6-month windows from BigQuery.
+Pull program metrics for YoY 12-month windows from BigQuery.
 Outputs: program_data_full.json
 
-Primary: Oct 2025 – Mar 2026 | Prior: Apr – Sep 2025
+Primary: Jul 2025 – Jun 2026 | Prior YoY: Jul 2024 – Jun 2025
 """
 from __future__ import annotations
 

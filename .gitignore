@@ -34,6 +34,7 @@ program_migration.json
 program_sankey_flow.json
 program_metrics.json
 program_metrics_filtered.json
+portfolio_mix_yoy.json
 demographics.json
 program_monthly.json
 qa_outlier_programs.json

@@ -122,7 +122,7 @@ funnel = data['funnel']
 primary_label = data.get('primary_period', {}).get('label', PRIMARY_LABEL)
 prior_label = data.get('prior_period', {}).get('label', PRIOR_LABEL)
 monthly_detail_label = data.get('monthly_detail_period', {}).get(
-    'label', 'Apr 2025 – May 2026'
+    'label', 'Apr 2025 – Jun 2026'
 )
 
 migration_path = ROOT / "program_migration.json"
@@ -811,6 +811,69 @@ def render_demographics_section(
         aria_label='Gender',
     )
     h += '</div>\n'
+
+    # ── Gender × LOB cross-tab ──────────────────────────────────────────
+    gender_by_lob_data = prof.get('gender_by_lob', {})
+    if gender_by_lob_data:
+        baseline_gbl = baseline.get('gender_by_lob', {})
+        lob_order = [l for l in ('Core', 'Military', 'B2B', 'TB') if l in gender_by_lob_data]
+
+        # ── Option A: stacked bar per LOB ──
+        h += '<div class="profile-card profile-card--wide"><h5>Gender by line of business</h5>\n'
+        h += '<div class="gender-lob-bars">\n'
+        for lob in lob_order:
+            gdist = gender_by_lob_data[lob]
+            female_pct = gdist.get('Female', 0)
+            bl_female = baseline_gbl.get(lob, {}).get('Female')
+            delta_html = ''
+            if bl_female is not None:
+                diff = female_pct - bl_female
+                sign = '+' if diff >= 0 else ''
+                cls = 'lob-delta-up' if diff >= 2 else ('lob-delta-down' if diff <= -2 else 'lob-delta-flat')
+                delta_html = f'<span class="lob-delta {cls}">{sign}{diff:.0f}pp vs baseline</span>'
+            h += (
+                f'<div class="gender-lob-row">'
+                f'<div class="gender-lob-lbl">{lob}</div>'
+                f'<div class="gender-lob-bar">'
+                + render_composition_strip(gdist, colors=GENDER_COLORS, aria_label=f'Gender {lob}')
+                + f'</div>'
+                f'{delta_html}'
+                f'</div>\n'
+            )
+        h += '</div>\n'  # gender-lob-bars
+
+        # ── Option B: compact female% comparison table ──
+        h += '<div class="gender-lob-table-wrap">\n'
+        h += '<p class="gender-lob-label-b">% Female by LOB</p>\n'
+        h += '<table class="gender-lob-tbl">\n'
+        h += '<thead><tr><th>LOB</th><th>% Female</th><th>% Male</th><th>vs Baseline</th></tr></thead>\n<tbody>\n'
+        for lob in lob_order:
+            gdist = gender_by_lob_data[lob]
+            female_pct = gdist.get('Female', 0)
+            male_pct = gdist.get('Male', 0)
+            bl_female = baseline_gbl.get(lob, {}).get('Female')
+            if bl_female is not None:
+                diff = female_pct - bl_female
+                sign = '+' if diff >= 0 else ''
+                cls = 'delta-pos' if diff >= 2 else ('delta-neg' if diff <= -2 else '')
+                delta_cell = f'<span class="{cls}">{sign}{diff:.0f}pp</span>'
+            else:
+                delta_cell = '—'
+            bar_w = int(round(female_pct))
+            h += (
+                f'<tr>'
+                f'<td class="lob-name">{lob}</td>'
+                f'<td class="lob-pct">'
+                f'<div class="lob-mini-bar" style="--w:{bar_w}%;--c:#AB0520">'
+                f'<span>{female_pct:.1f}%</span></div></td>'
+                f'<td class="lob-pct">{male_pct:.1f}%</td>'
+                f'<td class="lob-vs">{delta_cell}</td>'
+                f'</tr>\n'
+            )
+        h += '</tbody></table>\n'
+        h += '</div>\n'  # gender-lob-table-wrap
+        h += '</div>\n'  # profile-card
+    # ── End Gender × LOB ────────────────────────────────────────────────
 
     h += '<div class="profile-card"><h5>Race / ethnicity</h5>'
     h += render_composition_strip(
@@ -1502,6 +1565,32 @@ tr:hover {{ background: rgba(0, 118, 168, 0.06); }}
 .demo-age-note {{ margin-top: 0.5rem; font-size: 0.72rem; color: var(--muted); }}
 .demo-empty {{ font-size: 0.75rem; color: var(--muted); }}
 
+/* Gender × LOB — Option A: stacked bars */
+.gender-lob-bars {{ display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.9rem; }}
+.gender-lob-row {{ display: grid; grid-template-columns: 3.5rem 1fr auto; align-items: center; gap: 0.5rem; }}
+.gender-lob-lbl {{ font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; text-align: right; }}
+.gender-lob-bar .comp-strip {{ margin: 0; }}
+.gender-lob-bar .comp-bar {{ height: 22px; }}
+.lob-delta {{ font-size: 0.62rem; font-weight: 600; white-space: nowrap; }}
+.lob-delta-up {{ color: #007D8A; }}
+.lob-delta-down {{ color: var(--arizona-red); }}
+.lob-delta-flat {{ color: var(--muted); }}
+
+/* Gender × LOB — Option B: compact table */
+.gender-lob-table-wrap {{ border-top: 1px solid var(--border); padding-top: 0.65rem; }}
+.gender-lob-label-b {{ font-size: 0.62rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; }}
+.gender-lob-tbl {{ width: 100%; border-collapse: collapse; font-size: 0.75rem; }}
+.gender-lob-tbl th {{ font-size: 0.62rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--border); text-align: left; }}
+.gender-lob-tbl td {{ padding: 0.3rem 0.5rem; border-bottom: 1px solid var(--lgray,#f0f0f0); vertical-align: middle; }}
+.gender-lob-tbl .lob-name {{ font-weight: 700; color: var(--uagc-dark); width: 3.5rem; }}
+.gender-lob-tbl .lob-pct {{ text-align: right; font-variant-numeric: tabular-nums; }}
+.gender-lob-tbl .lob-vs {{ text-align: right; font-variant-numeric: tabular-nums; }}
+.lob-mini-bar {{ position: relative; background: #f0f0f0; border-radius: 2px; height: 18px; min-width: 60px; display: flex; align-items: center; }}
+.lob-mini-bar::before {{ content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: var(--w); background: var(--c); border-radius: 2px; opacity: 0.85; }}
+.lob-mini-bar span {{ position: relative; z-index: 1; font-size: 0.72rem; font-weight: 700; color: #fff; padding: 0 0.3rem; }}
+.delta-pos {{ color: #007D8A; font-weight: 700; }}
+.delta-neg {{ color: var(--arizona-red); font-weight: 700; }}
+
 /* Detail widgets: segment + LOB */
 .detail-widgets {{ display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin: 0.65rem 0 0.85rem; }}
 .widget-geo-embed {{ margin-top: 0.65rem; padding-top: 0.55rem; border-top: 1px solid var(--border); text-align: center; }}
@@ -1565,8 +1654,8 @@ tr:hover {{ background: rgba(0, 118, 168, 0.06); }}
 <body>
 <div class="container">
     <h1>{REPORT_TITLE}</h1>
-    <p class="subtitle">Lead funnel | Primary: {primary_label} vs Prior: {prior_label} | {date.today().strftime('%B %d, %Y')}</p>
-    <p class="sample-note">Summary matrix and <strong>full detail</strong> for every enrolling program ({len(undergrad_enrolling)} undergraduate, {len(graduate)} graduate). <strong>Level totals</strong>: {level_links_html}. Jump to <a href="#undergraduate-program-details">undergraduate details</a> or <a href="#graduate-program-details">graduate details</a>. <a href="#methodology">Methodology appendix</a> — formulas, mappings, and data sources.</p>
+    <p class="subtitle">Lead funnel | {primary_label} vs YoY {prior_label} | {date.today().strftime('%B %d, %Y')}</p>
+    <p class="sample-note">Summary matrix and <strong>full detail</strong> for every enrolling program ({len(undergrad_enrolling)} undergraduate, {len(graduate)} graduate). <strong>Level totals</strong>: {level_links_html}. Jump to <a href="#undergraduate-program-details">undergraduate details</a> or <a href="#graduate-program-details">graduate details</a>. <a href="#methodology">Methodology appendix</a> — formulas, mappings, and data sources. YoY mix &amp; program change analysis: <a href="program-insights.html">Program Insights</a> (standalone).</p>
 
     <a href="#top" class="back-to-top">&#8593; Top</a>
 
@@ -1747,15 +1836,16 @@ MATRIX_COLGROUP = (
 )
 
 
-def _matrix_column_header_row() -> str:
+def _matrix_column_header_row(matric_label: str = "") -> str:
+    matric_tip = matric_label or "current YoY window"
     return (
         '<tr class="matrix-cols-row">'
         "<th>#</th><th>Program</th><th>Group</th><th>Links</th>"
         "<th>Leads</th><th title=\"Application decisions\">Decisions</th>"
         "<th>Enrl</th><th title=\"Decisions ÷ leads\">Dec%</th>"
         "<th title=\"Enrollments ÷ leads\">Enrl%</th>"
-        "<th title=\"Decisions vs prior period\">Decision<br>Vs Prior</th>"
-        '<th class="matrix-col-sep" title="Gross Core LOB enrollments (SRM matric Apr 2025 – Mar 2026)">'
+        "<th title=\"Decisions vs prior YoY window\">Decision<br>YoY</th>"
+        f'<th class="matrix-col-sep" title="Gross Core LOB enrollments (SRM matric {matric_tip})">'
         "# Core</th><th>% Core</th><th>% Mil</th><th>% B2B</th>"
         '<th title="Navigational share of final enrollments">% Navig</th>'
         '<th class="matrix-col-sep">Net</th><th>Net Enrl%</th><th>Med Age</th><th>% Female</th>'
@@ -1763,7 +1853,7 @@ def _matrix_column_header_row() -> str:
     )
 
 
-def _matrix_table_open(funnel_band: str) -> str:
+def _matrix_table_open(funnel_band: str, matric_label: str = "") -> str:
     return (
         '<div class="matrix-wrap">\n<table class="matrix-table">\n'
         f"{MATRIX_COLGROUP}<thead>\n"
@@ -1773,7 +1863,7 @@ def _matrix_table_open(funnel_band: str) -> str:
         '<th colspan="5" class="matrix-band matrix-band--lob matrix-col-sep">Enrollment mix</th>'
         '<th colspan="4" class="matrix-band matrix-band--profile matrix-col-sep">Migration &amp; profile</th>'
         "</tr>\n"
-        + _matrix_column_header_row()
+        + _matrix_column_header_row(matric_label)
     )
 
 
@@ -1785,6 +1875,7 @@ def render_matrix_table(
     undecided_rollup: dict | None = None,
     period_label: str = "",
     rollup_rows: list[dict] | None = None,
+    matric_label: str = "",
 ):
     active_cls = ' active' if active else ''
     if rollup_rows:
@@ -1800,10 +1891,10 @@ def render_matrix_table(
             '<p class="matrix-legend">'
             '<span><strong>Level rollups</strong> — undergraduate (includes undecided inquiry placeholders), graduate, and combined overall.</span> '
             '<span class="matrix-legend-top5">Top 5 gross LOB enrollments</span> · '
-            '<span>Decision Vs prior: ▲/▼ beyond ±5%</span>'
+            '<span>Decision YoY: ▲/▼ beyond ±5%</span>'
             "</p>\n"
         )
-        h += _matrix_table_open(funnel_band) + "<tbody>\n"
+        h += _matrix_table_open(funnel_band, matric_label) + "<tbody>\n"
         for i, p in enumerate(rollup_rows, 1):
             pid = p['program_id']
             h += _matrix_row(
@@ -1838,11 +1929,11 @@ def render_matrix_table(
         '<p class="matrix-legend">'
         '<span><strong>Read left to right:</strong> program identity, funnel, enrollment mix, migration &amp; profile.</span> '
         '<span class="matrix-legend-top5">Top 5 gross LOB enrollments</span> · '
-        '<span>Decision Vs prior: ▲/▼ beyond ±5%</span> · '
+        '<span>Decision YoY: ▲/▼ beyond ±5%</span> · '
         '<span>NEW = new launch or immaterial prior volume</span>'
         "</p>\n"
     )
-    h += _matrix_table_open(funnel_band) + "<tbody>\n"
+    h += _matrix_table_open(funnel_band, matric_label) + "<tbody>\n"
     if level_rollup:
         pid = level_rollup['program_id']
         h += _matrix_row(
@@ -2010,6 +2101,7 @@ html += render_matrix_table(
     active=True,
     rollup_rows=totals_tab_rows,
     period_label=primary_label,
+    matric_label=lob_matric_label,
 )
 html += render_matrix_table(
     undergrad_enrolling,
@@ -2017,12 +2109,14 @@ html += render_matrix_table(
     level_rollup=undergrad_total or None,
     undecided_rollup=undecided_rollup,
     period_label=primary_label,
+    matric_label=lob_matric_label,
 )
 html += render_matrix_table(
     graduate,
     'grad',
     level_rollup=graduate_total or None,
     period_label=primary_label,
+    matric_label=lob_matric_label,
 )
 
 detail_programs_for_nav = undergrad_enrolling + graduate
@@ -2166,7 +2260,7 @@ def render_program_detail(
     block += _detail_header_ids_line(
         p, level_detail=level_detail, undecided_detail=undecided_detail
     )
-    block += f'            <p class="meta">Metrics: {period_primary} vs prior {period_prior}</p>\n'
+    block += f'            <p class="meta">Metrics: {period_primary} vs YoY {period_prior}</p>\n'
     block += '        </div>\n\n'
 
     if not level_detail and not undecided_detail:

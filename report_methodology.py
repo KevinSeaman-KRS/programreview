@@ -107,14 +107,18 @@ def render_methodology_appendix(report_date: date | None = None) -> str:
                 <dd>{_esc(PRIMARY_LABEL)} — script: <code>pull_full_data.py</code>,
                     <code>pull_program_detail_widgets.py</code>, <code>pull_sankey_flow.py</code></dd>
                 <dt>Prior window (year-over-year comparison)</dt>
-                <dd>{_esc(PRIOR_LABEL)} — same programs, prior 6 months in
+                <dd>{_esc(PRIOR_LABEL)} — same programs, prior Jul–Jun year in
                     <code>program_data_full.json</code> (<code>py_*</code> fields).</dd>
                 <dt>Monthly detail (all program detail pages)</dt>
-                <dd>{_esc(MONTHLY_DETAIL_LABEL)} — <code>program_data_full.json</code> →
-                    <code>monthly</code> keyed by program.</dd>
+                <dd>{_esc(MONTHLY_DETAIL_LABEL)} — 15 months (tail of prior YoY + current YoY);
+                    <code>program_data_full.json</code> → <code>monthly</code> keyed by program.</dd>
                 <dt>Program migration (all enrolling programs)</dt>
-                <dd>Rolling 12 months from current date (NY) —
+                <dd>{_esc(PRIMARY_LABEL)} inquiry window (fixed, not rolling) —
                     <code>pull_program_migration.py</code> → <code>program_migration.json</code>.</dd>
+                <dt>Mix &amp; program change analysis (standalone)</dt>
+                <dd><code>generate_program_insights.py</code> →
+                    <code>deploy/program-insights.html</code> — portfolio mix YoY and program
+                    volume movers; not embedded in program detail profiles.</dd>
             </dl>
 
             <h4>SQL Server — enrolled students &amp; program bridge</h4>
@@ -138,6 +142,7 @@ def render_methodology_appendix(report_date: date | None = None) -> str:
                 <li><code>program_detail_widgets.json</code> — marketing mix, Paid segment1 breakdown, enrollment LOB</li>
                 <li><code>program_sankey_flow.json</code> — segment1 inflow + funnel stages</li>
                 <li><code>program_demographics.json</code> — SRM profile + US regions + degree-level baselines</li>
+                <li><code>portfolio_mix_yoy.json</code> — feeds standalone insights report only</li>
                 <li><code>program_migration.json</code> — inquiry ↔ applied program flows (enrolling programs)</li>
                 <li><code>data/program_srm_bridge.json</code> — program metadata and account groups</li>
                 <li><code>data/program_alignment.json</code> — college, division, department, and academic

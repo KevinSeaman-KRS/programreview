@@ -14,6 +14,8 @@ from pathlib import Path
 
 from google.cloud import bigquery
 
+from report_periods import PRIMARY_END, PRIMARY_LABEL, PRIMARY_START
+
 DATA_DIR = Path(__file__).resolve().parent
 OUTPUT_PATH = DATA_DIR / "program_migration.json"
 
@@ -89,7 +91,9 @@ INQUIRY_BUCKET_SQL = """
   END
 """
 
-DATE_WINDOW = "inquiry_date >= DATE_SUB(CURRENT_DATE('America/New_York'), INTERVAL 12 MONTH)"
+DATE_WINDOW = (
+    f"inquiry_date >= '{PRIMARY_START}' AND inquiry_date < '{PRIMARY_END}'"
+)
 LEVEL_MATCH = "degree_level = applied_degree_level"
 FINAL_ENROLL = "IFNULL(is_new_enrollment_final, 0) = 1"
 
@@ -376,7 +380,7 @@ def main() -> None:
 
     payload = {
         "generated": str(date.today()),
-        "window": "12 months",
+        "window": PRIMARY_LABEL,
         "definitions": {
             "enrollment_view": (
                 "Final enrollments (is_new_enrollment_final=1) grouped by applied program; "

@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import Any
+from typing import Any, Callable
 
 
 def distribution_pct(rows: list[dict], field: str, top_n: int = 8, min_pct: float = 0.0) -> dict[str, float]:
@@ -94,6 +94,7 @@ def profile_rows(
         "label": label,
         "count": n,
         "gender": distribution_pct(rows, "gender"),
+        "gender_by_lob": gender_by_lob(rows),
         "race": distribution_pct(rows, "race", top_n=8),
         "minority": distribution_pct(rows, "minority"),
         "maritalstatus": distribution_pct(rows, "maritalstatus"),
@@ -186,10 +187,28 @@ def display_race(dist: dict[str, float]) -> dict[str, float]:
 LOB_DISPLAY_LABELS = {
     "Core/Other": "Core",
     "Core": "Core",
-    "Full Tuition Grant": "FTG",
+    "Full Tuition Grant": "B2B",
     "Military": "Military",
     "Tuition Benefit": "TB",
 }
+
+# LOB filters for cross-tab — maps display label to row-filter function
+_LOB_FILTER_MAP: list[tuple[str, Any]] = [
+    ("Core",     lambda r: (r.get("lineofbusiness") or "").strip() in {"Core", "Core/Other"}),
+    ("Military", lambda r: (r.get("lineofbusiness") or "").strip() == "Military"),
+    ("B2B",      lambda r: (r.get("lineofbusiness") or "").strip() == "Full Tuition Grant"),
+    ("TB",       lambda r: (r.get("lineofbusiness") or "").strip() == "Tuition Benefit"),
+]
+
+
+def gender_by_lob(rows: list[dict], min_n: int = 10) -> dict[str, dict[str, float]]:
+    """Female/Male % breakdown within each LOB. Only includes LOBs with >= min_n students."""
+    result: dict[str, dict[str, float]] = {}
+    for lob_label, filter_fn in _LOB_FILTER_MAP:
+        subset = [r for r in rows if filter_fn(r)]
+        if len(subset) >= min_n:
+            result[lob_label] = display_gender(distribution_pct(subset, "gender"))
+    return result
 
 
 def display_lineofbusiness(dist: dict[str, float]) -> dict[str, float]:

@@ -1,0 +1,28 @@
+# Publish program report HTML from deploy/ on push to main.
+# Artifacts: Azure DevOps → Pipelines → run → program-report-html
+# Optional static hosting: see docs/azure-devops-setup.md
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - deploy/*
+      - azure-pipelines.yml
+
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - checkout: self
+    displayName: Checkout repository
+
+  - task: PublishPipelineArtifact@1
+    displayName: Publish program report HTML
+    inputs:
+      targetPath: deploy
+      artifact: program-report-html
+      publishLocation: pipeline

@@ -2,7 +2,7 @@
 Pull per-program widgets for detail pages:
   1) marketing_segment_rollup — % leads & % final enrollments (BigQuery)
   2) enrollment line of business — Core, FTG, Tuition Benefit, Military (SRM + bridge,
-     DEMOGRAPHICS_MATRIC_* 12-month window; marketing mix stays on PRIMARY inquiry window)
+     PRIMARY YoY window; SRM matric aligned to same Jul–Jun window)
 """
 from __future__ import annotations
 

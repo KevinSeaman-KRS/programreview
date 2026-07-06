@@ -53,7 +53,7 @@ MCP_SERVERS: list[dict[str, str]] = [
         "name": "user-git",
         "role": "Deploy",
         "tools": "status, diff, commit, log, branch",
-        "use": "GitHub Pages deploy repo (<code>uagc-program-report</code>).",
+        "use": "Azure DevOps pipeline artifact (<code>program-report-html</code>); repo Program Details / Marketing.",
     },
     {
         "name": "user-fetch",

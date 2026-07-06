@@ -1,29 +1,34 @@
 """Shared reporting windows (America/New_York inquiry / matric dates)."""
 
-PRIMARY_START = "2025-10-01"
-PRIMARY_END = "2026-04-01"  # exclusive — through March 2026
-PRIOR_START = "2025-04-01"
-PRIOR_END = "2025-10-01"  # exclusive — April–September 2025
+# Year-over-year fiscal-style windows (Jul–Jun)
+PRIMARY_START = "2025-07-01"
+PRIMARY_END = "2026-07-01"  # exclusive — through June 2026
+PRIOR_START = "2024-07-01"
+PRIOR_END = "2025-07-01"  # exclusive — through June 2025
 
-PRIMARY_LABEL = "Oct 2025 – Mar 2026"
-PRIOR_LABEL = "Apr – Sep 2025"
+PRIMARY_LABEL = "Jul 2025 – Jun 2026"
+PRIOR_LABEL = "Jul 2024 – Jun 2025"
 
-# Enrolled-student profile (SRM matriculations) — 12 months for stable composition %
-DEMOGRAPHICS_MATRIC_START = "2025-04-01"
-DEMOGRAPHICS_MATRIC_END = "2026-04-01"  # exclusive — through March 2026
-DEMOGRAPHICS_MATRIC_LABEL = "Apr 2025 – Mar 2026"
+# Enrolled-student profile (SRM) — aligned with primary YoY window
+DEMOGRAPHICS_MATRIC_START = PRIMARY_START
+DEMOGRAPHICS_MATRIC_END = PRIMARY_END
+DEMOGRAPHICS_MATRIC_LABEL = PRIMARY_LABEL
+
+PRIOR_MATRIC_START = PRIOR_START
+PRIOR_MATRIC_END = PRIOR_END
+PRIOR_MATRIC_LABEL = PRIOR_LABEL
 
 NAVIGATIONAL_SEGMENTS = frozenset({"Brand - Search", "Organic"})
 
-# Detail-page monthly chart + table (14 months)
+# Detail-page monthly chart + table (15 months: tail of prior YoY + current YoY)
 MONTHLY_DETAIL_START = "2025-04-01"
-MONTHLY_DETAIL_END = "2026-06-01"  # exclusive — through May 2026
-MONTHLY_DETAIL_LABEL = "Apr 2025 – May 2026"
+MONTHLY_DETAIL_END = "2026-07-01"  # exclusive — through June 2026
+MONTHLY_DETAIL_LABEL = "Apr 2025 – Jun 2026"
 
 MONTHLY_DETAIL_MONTHS: list[str] = [
     "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09",
     "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03",
-    "2026-04", "2026-05",
+    "2026-04", "2026-05", "2026-06",
 ]
 
 # Legacy sample set (capture_all_screenshots.py --samples); report includes all enrolling programs

@@ -2,7 +2,11 @@
 
 ## Data Window
 
-- **Expand to 12 months** (from 6) for a more complete picture
+- **YoY Jul–Jun windows** (implemented): Primary Jul 2025 – Jun 2026 vs Prior Jul 2024 – Jun 2025
+- **Monthly detail:** 15 months (Apr 2025 – Jun 2026)
+- **SRM matric** aligned to primary window; migration uses primary year only
+- **Mix YoY tab:** portfolio degree-level + LOB enrollment mix (see `pull_portfolio_mix_yoy.py`)
+- **Standalone insights:** `generate_program_insights.py` → `deploy/program-insights.html` (mix analysis + program movers; not on detail profiles)
 
 ## Matrix Improvements
 
