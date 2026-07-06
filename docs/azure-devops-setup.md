@@ -43,6 +43,18 @@ git clone "https://UAGC-Solutions@dev.azure.com/UAGC-Solutions/Marketing/_git/Pr
 
 Use a [Personal Access Token (PAT)](https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate) with **Code (Read & write)** when Git prompts for a password.
 
+If Git reports *Cannot determine the organization name* for Azure remotes, run once on your machine (outside this repo):
+
+```powershell
+git config --global credential.useHttpPath true
+```
+
+Remote URL format:
+
+```text
+https://UAGC-Solutions@dev.azure.com/UAGC-Solutions/Marketing/_git/Program%20Details
+```
+
 ## Pipeline
 
 `azure-pipelines.yml` publishes the `deploy/` folder as artifact **`program-report-html`** on every push to `main` that touches `deploy/`.
